@@ -18,12 +18,7 @@
 
 	let screen: 'waiting' | 'cards' | 'scores' | 'winner' = 'waiting';
 
-	$: if (screen == 'cards') {
-	}
-
-	$: if (screen == 'scores') {
-		(async () => {})();
-	}
+	let packs = ['Base', 'Green'];
 
 	let code = 123456;
 </script>
@@ -36,6 +31,7 @@
 {#if screen == 'waiting'}
 	<Waiting
 		players={[...players.keys()]}
+		{packs}
 		on:start={async () => {
 			screen = 'cards';
 
