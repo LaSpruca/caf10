@@ -16,7 +16,7 @@
 </script>
 
 <div class="w-full">
-	<div class="text-3xl font-bold text-gray-300 text-center">
+	<div class="text-center text-3xl font-bold text-gray-300">
 		{player}
 	</div>
 	<div class="relative">
@@ -32,6 +32,6 @@
 		<div class="absolute left-[90%] top-[-5%] h-11 w-[1px] bg-gray-400" />
 		<div class="absolute left-[100%] top-[-5%] h-11 w-[1px] bg-gray-400" />
 
-		<div class="bg-gray-200 h-10" style="width: {$percentage}%;" />
+		<div class="h-10 bg-gray-200" style="width: {$percentage}%;" />
 	</div>
 </div>

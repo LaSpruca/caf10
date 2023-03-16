@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { cubicIn } from 'svelte/easing';
+	import { fadeSettings } from '$lib/util';
 	import { fade } from 'svelte/transition';
 	import ScoreDisplay from './ScoreDisplay.svelte';
 	export let players: Map<string, number>;
@@ -9,10 +9,10 @@
 	playersSorted = playersSorted.splice(0, 5);
 </script>
 
-<div transition:fade="{{duration: 1000, easing: cubicIn}}" class="w-full">
-	<h1 class="text-white text-center font-bold text-6xl">Leaderboard</h1>
+<div in:fade={fadeSettings.in} out:fade={fadeSettings.out} class="w-full">
+	<h1 class="text-center text-6xl font-bold text-white">Leaderboard</h1>
 
-	<div class="flex gap-10 content-center items-center p-10 flex-col w-full">
+	<div class="flex w-full flex-col content-center items-center gap-10 p-10">
 		{#each playersSorted as [player, score]}
 			<ScoreDisplay {player} {score} />
 		{/each}

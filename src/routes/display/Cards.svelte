@@ -1,5 +1,7 @@
 <script lang="ts">
 	import Card from '$lib/Card.svelte';
+	import { fadeSettings } from '$lib/util';
+	import { createEventDispatcher } from 'svelte';
 	import { fade } from 'svelte/transition';
 
 	export let blackCard: string;
@@ -8,12 +10,12 @@
 	export let selected: number = -1;
 </script>
 
-<div transition:fade>
-	<div class="flex justify-center items-center">
+<div in:fade={fadeSettings.in} out:fade={fadeSettings.out}>
+	<div class="flex items-center justify-center">
 		<Card content={blackCard} color="black" />
 	</div>
 
-	<div class="flex gap-3 p-10 flex-wrap justify-center">
+	<div class="flex flex-wrap justify-center gap-3 p-10">
 		{#each whiteCards as content, index}
 			<Card {content} color="white" up={index == selected} {shown} />
 		{/each}
