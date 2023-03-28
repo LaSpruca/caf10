@@ -6,7 +6,7 @@
 	import Winner from './Winner.svelte';
 
 	let shown = false;
-	let cards: string[] = [];
+	let cards: (string | [string, string])[] = [];
 	let players = new Map([
 		['Connor', 7],
 		['Molly', 2],
@@ -36,16 +36,44 @@
 			screen = 'cards';
 
 			await sleep(1000);
-			cards = [...cards, 'Sandrew'];
+			cards = [...cards, 'AA'];
 
 			await sleep(400);
-			cards = [...cards, 'Matthew'];
+			cards = [...cards, 'BB'];
 
 			await sleep(1500);
-			cards = [...cards, 'Trison'];
+			cards = [...cards, 'CC'];
 
 			await sleep(600);
-			cards = [...cards, 'Sara'];
+			cards = [...cards, 'DD'];
+
+			await sleep(500);
+			shown = true;
+
+			await sleep(2500);
+			selected = 1;
+
+			await sleep(3000);
+			shown = false;
+			selected = 0;
+
+			screen = 'scores';
+			await sleep(3000);
+
+			screen = 'cards';
+
+			cards = [];
+			await sleep(1000);
+			cards = [...cards, ['AA', 'AB']];
+
+			await sleep(400);
+			cards = [...cards, ['BB', 'BC']];
+
+			await sleep(1500);
+			cards = [...cards, ['CC', 'CD']];
+
+			await sleep(600);
+			cards = [...cards, ['DD', 'DE']];
 
 			await sleep(500);
 			shown = true;

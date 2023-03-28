@@ -15,7 +15,15 @@
 
 	let score = 0;
 
-	let screen: 'czar wait' | 'czar' | 'wait' | 'cards' | 'placing' = 'czar wait';
+	let screen:
+		| 'czar wait'
+		| 'czar'
+		| 'wait'
+		| 'cards'
+		| 'placing'
+		| 'czar wait 2'
+		| 'czar 2'
+		| 'cards 2' = 'czar wait';
 
 	(async () => {
 		await sleep(1500);
@@ -41,12 +49,46 @@
 				(async () => {
 					screen = 'wait';
 					await sleep(1000);
+					screen = 'czar wait 2';
+					await sleep(2000);
+					screen = 'czar 2';
+				})();
+			}}
+		/>
+	{:else if screen == 'czar wait 2' || screen == 'czar 2'}
+		<CardCzar
+			{blackCard}
+			cards={screen == 'czar 2'
+				? [
+						['One', 'One B'],
+						['Two', 'Two B'],
+						['Three', 'Three B'],
+						['Four', 'Four B']
+				  ]
+				: undefined}
+			on:selected={() => {
+				(async () => {
+					screen = 'wait';
+					await sleep(1000);
 					screen = 'cards';
 				})();
 			}}
 		/>
 	{:else if screen == 'cards'}
 		<Cards
+			{blackCard}
+			{cards}
+			on:selected={() => {
+				(async () => {
+					screen = 'wait';
+					await sleep(1000);
+					screen = 'cards 2';
+				})();
+			}}
+		/>
+	{:else if screen == 'cards 2'}
+		<Cards
+			two={true}
 			{blackCard}
 			{cards}
 			on:selected={() => {

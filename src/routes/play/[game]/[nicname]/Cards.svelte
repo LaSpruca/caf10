@@ -6,6 +6,7 @@
 
 	export let blackCard: string;
 	export let cards: string[];
+	export let two = false;
 </script>
 
 <div in:fade={fadeSettings.in} out:fade={fadeSettings.out}>
@@ -14,5 +15,5 @@
 	<div class="flex items-center justify-center p-10">
 		<Card color="black" content={blackCard} />
 	</div>
-	<CardsSelect {cards} on:selected />
+	<CardsSelect {cards} on:selected numberCards={two ? 2 : 1} />
 </div>
