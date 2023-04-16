@@ -14,9 +14,9 @@ export default class WsClient<T extends Extras> {
 		this.#events = {};
 	}
 
-	init() {
+	init(path: string) {
 		console.log(this);
-		let client = new WebSocket(`${BACKEND_URL.replace('http', 'ws')}/display`);
+		let client = new WebSocket(`${BACKEND_URL.replace('http', 'ws')}/${path}`);
 		client.addEventListener('open', () => {
 			console.log('Socket opened');
 			this.#ready = true;
@@ -37,6 +37,7 @@ export default class WsClient<T extends Extras> {
 
 		client.addEventListener('message', <V extends keyof T>(e: MessageEvent) => {
 			const data = JSON.parse(e.data) as { type: V } & T[V];
+			console.log(data);
 			this.#events[data.type]?.(data);
 		});
 	}

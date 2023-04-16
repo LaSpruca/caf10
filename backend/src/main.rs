@@ -50,7 +50,8 @@ async fn main() -> io::Result<()> {
 
 #[derive(Debug, Clone, Deserialize)]
 struct GameQueryParams {
-    name: String,
+    name: Option<String>,
+    code: Option<String>,
 }
 
 #[get("/display")]
@@ -63,9 +64,8 @@ async fn display_route(
     ws::start(DisplayActor::new(srv.get_ref().clone()), &req, stream)
 }
 
-#[get("/game/{game}")]
+#[get("/game")]
 async fn game_route(
-    game_code: Path<(String)>,
     params: Query<GameQueryParams>,
     srv: web::Data<Addr<ServerActor>>,
     req: HttpRequest,
@@ -76,8 +76,8 @@ async fn game_route(
     ws::start(
         PlayerActor::new(
             srv.get_ref().clone(),
-            game_code.into_inner(),
-            params.name.clone(),
+            params.code.clone().unwrap_or_default(),
+            params.name.clone().unwrap_or_default(),
         ),
         &req,
         stream,

@@ -1,13 +1,12 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { sleep } from '$lib/util';
-	import type { PageData } from './$types';
 	import CardCzar from './CardCzar.svelte';
 	import Cards from './Cards.svelte';
+	import { init } from '$lib/game_state';
 
-	export let data: PageData;
-
-	let { game, nicname } = data;
+	// export let game;
+	// export let nicname;
 
 	let blackCard = '_____ is my favourite activity';
 
@@ -32,12 +31,12 @@
 </script>
 
 <div class="fixed left-[5vw] top-5 flex w-[90vw] justify-between font-bold text-gray-400">
-	<p>
+	<!-- <p>
 		{('' + game).substring(0, 3)}
 		{('' + game).substring(3)}
-	</p>
+	</p> -->
 	<p>Score: {score}</p>
-	<p>{nicname}</p>
+	<!-- <p>{nicname}</p> -->
 </div>
 
 <div class="pt-10">

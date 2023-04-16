@@ -1,5 +1,6 @@
 import { writable } from 'svelte/store';
 import WsClient, { type Extras } from './ws_client';
+import { browser } from '$app/environment';
 
 type EventMap = {
 	code: { code: string };
@@ -18,4 +19,4 @@ client.on('code', ({ code }) => {
 	gameCode.set(code);
 });
 
-export const init = () => client.init('display');
+export const init = (code: string, name: string) => client.init(`game?code=${code}&name=${name}`);
