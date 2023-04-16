@@ -4,6 +4,12 @@
 	import Scores from './Scores.svelte';
 	import Waiting from './Waiting.svelte';
 	import Winner from './Winner.svelte';
+	import { init, gameCode } from '$lib/display_state';
+	import { onMount } from 'svelte';
+
+	onMount(() => {
+		init();
+	});
 
 	let shown = false;
 	let cards: (string | [string, string])[] = [];
@@ -19,13 +25,11 @@
 	let screen: 'waiting' | 'cards' | 'scores' | 'winner' = 'waiting';
 
 	let packs = ['Base', 'Green'];
-
-	let code = 123456;
 </script>
 
 <p class="fixed text-xl font-bold text-gray-500">
-	Game Code: {('' + code).substring(0, 3)}
-	{('' + code).substring(3)}
+	Game Code: {('' + $gameCode).substring(0, 3)}
+	{('' + $gameCode).substring(3)}
 </p>
 
 {#if screen == 'waiting'}
