@@ -1,7 +1,6 @@
-use std::{fmt::DebugStruct, time::Duration};
-
-use actix::{clock::Instant, Actor, ActorContext};
+use actix::{clock::Instant, Actor, ActorContext, AsyncContext};
 use actix_web_actors::ws;
+use std::time::Duration;
 use tracing::warn;
 
 pub mod display;
@@ -27,19 +26,20 @@ where
     T: Hb + Actor<Context = ws::WebsocketContext<T>>,
 {
     fn hb(&self, ctx: &mut Self::Context) {
-        // check client heartbeats
-        if Instant::now().duration_since(self.get_hb()) > HB_TIMEOUT {
-            // notify chat server
-            // act.addr.do_send(server::Disconnect { id: act.id });
-            warn!("HB Failed");
+        ctx.run_interval(HB_INTERVAL, |slf, ctx| {
+            if Instant::now().duration_since(slf.get_hb()) > HB_TIMEOUT {
+                // notify chat server
+                // act.addr.do_send(server::Disconnect { id: act.id });
+                warn!("HB Failed");
 
-            // stop actor
-            ctx.stop();
+                // stop actor
+                ctx.stop();
 
-            // don't try to send a ping
-            return;
-        }
+                // don't try to send a ping
+                return;
+            }
 
-        ctx.ping(b"");
+            ctx.ping(b"");
+        });
     }
 }

@@ -1,6 +1,6 @@
 use actix::MailboxError;
-use actix_web::{body::BoxBody, http::StatusCode, HttpResponseBuilder, Responder, ResponseError};
-use serde::Serialize;
+use actix_web::{body::BoxBody, http::StatusCode, HttpResponseBuilder, ResponseError};
+
 use thiserror::Error;
 
 #[derive(Error, Debug)]
@@ -28,7 +28,7 @@ impl ResponseError for ApiError {
 }
 
 impl From<MailboxError> for ApiError {
-    fn from(value: MailboxError) -> Self {
+    fn from(_: MailboxError) -> Self {
         ApiError::InternalServerError
     }
 }

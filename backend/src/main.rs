@@ -1,9 +1,9 @@
-#![allow(warnings)]
-
+// #![allow(warnings)]
+use crate::actors::player::PlayerActor;
 use actix::{Actor, Addr};
 use actix_web::{
     get,
-    web::{self, Data, Path, Query},
+    web::{self, Data, Query},
     App, Error, HttpRequest, HttpResponse, HttpServer,
 };
 use actix_web_actors::ws;
@@ -12,11 +12,6 @@ use serde::Deserialize;
 use std::io;
 use tracing::{debug, info};
 use tracing_subscriber::filter::LevelFilter;
-
-use crate::{
-    actors::{player::PlayerActor, server::PlayerJoin},
-    error::ApiError,
-};
 
 mod actors;
 mod error;

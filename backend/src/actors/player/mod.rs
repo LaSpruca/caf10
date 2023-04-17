@@ -1,17 +1,21 @@
+mod messages;
 mod packets;
 
 use self::packets::SendPackets;
-
-use super::{
-    server::{self, ServerActor},
-    Hb, RunHb,
+use crate::{
+    actors::server::PlayerJoin,
+    actors::{
+        server::{self, ServerActor},
+        Hb, RunHb,
+    },
+    error::ApiError,
 };
-use crate::{actors::server::PlayerJoin, error::ApiError};
 use actix::{
     clock::Instant, fut, Actor, ActorContext, ActorFutureExt, Addr, AsyncContext,
     ContextFutureSpawner, StreamHandler, WrapFuture,
 };
 use actix_web_actors::ws;
+pub use messages::*;
 use tracing::{error, info};
 
 pub struct PlayerActor {
@@ -51,9 +55,17 @@ impl Actor for PlayerActor {
                 player_name: self.name.clone(),
             })
             .into_actor(self)
-            .then(|res, act, ctx| {
+            .then(|res, slf, ctx| {
                 match res {
-                    Ok(Ok(())) => {}
+                    Ok(Ok(())) => {
+                        ctx.text(
+                            serde_json::to_string(&SendPackets::JoinSuccess {
+                                game_code: slf.game_code.clone(),
+                                name: slf.name.clone(),
+                            })
+                            .unwrap(),
+                        );
+                    }
                     Ok(Err(ApiError::NameTaken)) => {
                         ctx.text(serde_json::to_string(&SendPackets::NameTaken).unwrap());
                         ctx.stop();
@@ -71,10 +83,12 @@ impl Actor for PlayerActor {
     }
 
     fn stopping(&mut self, _: &mut Self::Context) -> actix::Running {
-        self.game_server.send(server::PlayerLeave {
-            game_code: self.game_code.clone(),
-            name: self.name.clone(),
-        });
+        self.game_server
+            .send(server::PlayerLeave {
+                game_code: self.game_code.clone(),
+                name: self.name.clone(),
+            })
+            .into_actor(self);
 
         actix::Running::Stop
     }

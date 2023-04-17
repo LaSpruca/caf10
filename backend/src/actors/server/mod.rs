@@ -1,12 +1,13 @@
 mod messages;
 
-use crate::error::ApiError;
-
-use super::{display::DisplayActor, player::PlayerActor};
-use actix::{Actor, Addr, Handler, Message};
+use crate::{
+    actors::{display::DisplayActor, player::PlayerActor},
+    error::ApiError,
+};
+use actix::{Actor, Addr, Handler};
 pub use messages::*;
 use rand::{thread_rng, Rng};
-use std::collections::HashMap;
+use std::collections::{hash_map::Entry, HashMap};
 
 pub struct ServerActor {
     games: HashMap<String, Addr<DisplayActor>>,
@@ -74,11 +75,11 @@ impl Handler<PlayerJoin> for ServerActor {
             .get_mut(&game_code)
             .ok_or(ApiError::NoGameCode)
             .and_then(|players| {
-                if players.contains_key(&player_name) {
-                    Err(ApiError::NameTaken)
-                } else {
-                    players.insert(player_name, addr);
+                if let Entry::Vacant(entry) = players.entry(player_name.clone()) {
+                    entry.insert(addr);
                     Ok(())
+                } else {
+                    Err(ApiError::NameTaken)
                 }
             })
     }

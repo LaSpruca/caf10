@@ -1,17 +1,17 @@
-use actix::{
-    clock::Instant, fut, Actor, ActorContext, ActorFutureExt, Addr, AsyncContext,
-    ContextFutureSpawner, StreamHandler, WrapFuture,
-};
-use actix_web_actors::ws;
-use tracing::{error, info};
-use tracing_subscriber::fmt::format;
-
+mod messages;
 mod packets;
 
-use super::{
+use crate::actors::{
     server::{self, CreateGame, ServerActor},
-    Hb, RunHb, HB_INTERVAL,
+    Hb, RunHb,
 };
+use actix::{
+    clock::Instant, fut, Actor, ActorContext, ActorFutureExt, Addr, AsyncContext,
+    ContextFutureSpawner, Handler, StreamHandler, WrapFuture,
+};
+use actix_web_actors::ws;
+pub use messages::*;
+use tracing::{error, info};
 
 pub struct DisplayActor {
     hb: Instant,
@@ -41,8 +41,7 @@ impl Actor for DisplayActor {
     fn started(&mut self, ctx: &mut Self::Context) {
         self.hb(ctx);
         info!("Socket started");
-        let game_code = self
-            .game_server
+        self.game_server
             .send(CreateGame(ctx.address()))
             .into_actor(self)
             .then(|res, act, ctx| {
@@ -52,6 +51,12 @@ impl Actor for DisplayActor {
                         ctx.text(
                             serde_json::to_string(&packets::SendPackets::Code { code: res })
                                 .unwrap(),
+                        );
+                        ctx.text(
+                            serde_json::to_string(&packets::SendPackets::Decks {
+                                decks: vec!["base".into()],
+                            })
+                            .unwrap(),
                         );
                     }
                     // something is wrong with chat server
@@ -64,7 +69,8 @@ impl Actor for DisplayActor {
 
     fn stopping(&mut self, _: &mut Self::Context) -> actix::Running {
         self.game_server
-            .send(server::GameClose(self.game_code.clone()));
+            .send(server::GameClose(self.game_code.clone()))
+            .into_actor(self);
 
         actix::Running::Stop
     }
@@ -98,5 +104,18 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for DisplayActor {
             } // ws::Message::Nop => todo!(),
             _ => info!("Unknown message"),
         }
+    }
+}
+
+impl Handler<PlayerJoin> for DisplayActor {
+    type Result = ();
+
+    fn handle(&mut self, msg: PlayerJoin, ctx: &mut Self::Context) {
+        ctx.text(
+            serde_json::to_string(&packets::SendPackets::PlayerJoin {
+                name: msg.0.clone(),
+            })
+            .unwrap(),
+        );
     }
 }
