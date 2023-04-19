@@ -1,6 +1,7 @@
 <script lang="ts">
-	import { init, gameCode, state } from '$lib/display_state';
+	import { init, gameCode, state, players, packs } from '$lib/display_state';
 	import { onMount } from 'svelte';
+	import Waiting from './Waiting.svelte';
 
 	onMount(() => {
 		init();
@@ -12,4 +13,6 @@
 	{('' + $gameCode).substring(3)}
 </p>
 
-{#if $state == 'select_packs'}{/if}
+{#if $state == 'select_packs'}
+	<Waiting players={$players} packs={$packs} />
+{/if}

@@ -29,6 +29,7 @@ client.on('code', ({ code }) => {
 
 client.on('available_packs', ({ packs: availablePacks }) => {
 	packs.set(availablePacks);
+	state.set('select_packs');
 });
 
 client.on('playerJoin', ({ name }) => {
